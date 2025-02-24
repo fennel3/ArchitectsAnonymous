@@ -1,28 +1,21 @@
 "use client";
 
-type Props = {
-  surveyData: SurveyData;
-};
-
-
-
+import getSurvey from "@/actions/getSurvey";
 import { updateSurvey } from "@/actions/updateSurvey";
 import { SurveyData } from "@/app/page";
 import { FormEvent, useEffect, useState } from "react";
 
-export default function Notepad({ surveyData }: Props) {
-  const [notes, setNotes] = useState(surveyData.notes || "");
+export default function Notepad() {
+  const [notes, setNotes] = useState("");
   const [survey, setSurvey] = useState("");
 
- 
   useEffect(() => {
     const savedNotes = localStorage.getItem("notes");
     const savedSurvey = localStorage.getItem("survey");
-    
+
     if (savedNotes) setNotes(savedNotes);
     if (savedSurvey) setSurvey(savedSurvey);
   }, []);
-
 
   useEffect(() => {
     if (notes) localStorage.setItem("notes", notes);
@@ -38,6 +31,20 @@ export default function Notepad({ surveyData }: Props) {
     await updateSurvey(formData);
   };
 
+  const handleSurveyChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedSurvey = e.target.value;
+    setSurvey(selectedSurvey);
+
+    if (selectedSurvey) {
+      const surveyData = await getSurvey(selectedSurvey);
+      setNotes(surveyData?.notes || "");
+    } else {
+      setNotes("");
+    }
+  };
+
   return (
     <>
       <form onSubmit={handleSubmit} className="h-full flex flex-col p-4 pb-10">
@@ -45,11 +52,14 @@ export default function Notepad({ surveyData }: Props) {
           <select
             name="id"
             value={survey}
-            onChange={(e) => setSurvey(e.target.value)}
-            className="w-full p-2 mb-2 rounded-lg border  text-black"
+            onChange={handleSurveyChange}
+            className="w-full p-2 mb-2 rounded-lg border text-black"
           >
             <option value="">Select a survey</option>
-            <option value={surveyData.id}>Note id {surveyData.id}</option>
+            <option value="3733e00f-545b-44b8-b1de-335b606e6102">
+              first Survey
+            </option>
+            <option value="1">this would be another note</option>
           </select>
         </div>
 
