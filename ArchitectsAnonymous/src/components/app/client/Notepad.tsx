@@ -19,7 +19,7 @@ export default function Notepad() {
 
   useEffect(() => {
     if (notes) localStorage.setItem("notes", notes);
-  }, [notes]);
+  }, [notes]); 
 
   useEffect(() => {
     if (survey) localStorage.setItem("survey", survey);
